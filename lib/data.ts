@@ -25,16 +25,15 @@ export const MEDICINE_CATEGORIES = {
 
 export type MedicineCategory = keyof typeof MEDICINE_CATEGORIES
 
-// User roles
-export type UserRole = "cms" | "facility" | "logistics" | "clinician" | "surveillance" | "patient"
+// User roles (Patient role removed - patient portal is for clinicians only)
+export type UserRole = "cms" | "facility" | "logistics" | "clinician" | "surveillance"
 
 export const USER_ROLES: Record<UserRole, { label: string; description: string }> = {
   cms: { label: "CMS Planner", description: "Central Medical Stores planning and procurement" },
   facility: { label: "Facility Manager", description: "Pharmacy and stock management at health facilities" },
   logistics: { label: "Logistics Team", description: "Supply chain and distribution management" },
-  clinician: { label: "Clinician", description: "Healthcare providers prescribing and dispensing" },
+  clinician: { label: "Clinician", description: "Healthcare providers - access patient records and prescriptions" },
   surveillance: { label: "Surveillance Team", description: "Epidemiological monitoring and analysis" },
-  patient: { label: "Patient", description: "Access your medications and treatment schedule" },
 }
 
 // Mock district risk data

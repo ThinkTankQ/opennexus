@@ -28,7 +28,6 @@ const roleIcons: Record<UserRole, React.ReactNode> = {
   logistics: <Truck className="h-6 w-6" />,
   clinician: <Stethoscope className="h-6 w-6" />,
   surveillance: <BarChart3 className="h-6 w-6" />,
-  patient: <User className="h-6 w-6" />,
 }
 
 const roleRedirects: Record<UserRole, string> = {
@@ -37,7 +36,6 @@ const roleRedirects: Record<UserRole, string> = {
   logistics: "/dashboard/logistics",
   clinician: "/dashboard/clinician",
   surveillance: "/dashboard/surveillance",
-  patient: "/patient",
 }
 
 // Demo credentials for each role
@@ -47,7 +45,6 @@ const demoCredentials: Record<UserRole, { username: string; password: string }> 
   logistics: { username: "logistics@cms.gov.bw", password: "demo123" },
   clinician: { username: "dr.mosweu@marina.gov.bw", password: "demo123" },
   surveillance: { username: "surveillance@moh.gov.bw", password: "demo123" },
-  patient: { username: "patient@example.com", password: "demo123" },
 }
 
 export default function LoginPage() {
@@ -69,8 +66,9 @@ export default function LoginPage() {
     if (!selectedRole) return
     
     setIsLoading(true)
-    // Simulate login
+    // Simulate login and set auth session
     await new Promise((resolve) => setTimeout(resolve, 800))
+    sessionStorage.setItem('medsight_auth', selectedRole)
     router.push(roleRedirects[selectedRole])
   }
 
@@ -128,20 +126,12 @@ export default function LoginPage() {
                   ([role, { label, description }]) => (
                     <Card
                       key={role}
-                      className={cn(
-                        "cursor-pointer transition-all hover:shadow-md hover:border-primary/50",
-                        role === "patient" && "md:col-span-2 lg:col-span-1"
-                      )}
+                      className="cursor-pointer transition-all hover:shadow-md hover:border-primary/50"
                       onClick={() => handleRoleSelect(role)}
                     >
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
-                          <div className={cn(
-                            "p-3 rounded-xl",
-                            role === "patient" 
-                              ? "bg-secondary/10 text-secondary" 
-                              : "bg-primary/10 text-primary"
-                          )}>
+                          <div className="p-3 rounded-xl bg-primary/10 text-primary">
                             {roleIcons[role]}
                           </div>
                           <div className="flex-1">
@@ -168,12 +158,7 @@ export default function LoginPage() {
                   <Button variant="ghost" size="icon" onClick={handleBack}>
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
-                  <div className={cn(
-                    "p-2 rounded-lg",
-                    selectedRole === "patient" 
-                      ? "bg-secondary/10 text-secondary" 
-                      : "bg-primary/10 text-primary"
-                  )}>
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
                     {roleIcons[selectedRole]}
                   </div>
                   <div>
@@ -222,15 +207,6 @@ export default function LoginPage() {
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
-
-                {selectedRole === "patient" && (
-                  <div className="mt-4 pt-4 border-t text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Need help accessing your account?
-                    </p>
-                    <p className="text-sm text-primary">Contact your health facility</p>
-                  </div>
-                )}
               </CardContent>
             </Card>
           )}

@@ -77,6 +77,31 @@ export default function ClinicianDashboardPage() {
       alertCount={criticalPatients + overduePickups}
     >
       <div className="space-y-6">
+        {/* Quick Actions */}
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Patient Records Portal</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Access full prescription history, treatment records, and patient locations
+                  </p>
+                </div>
+              </div>
+              <Link href="/patient">
+                <Button>
+                  Open Patient Portal
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* KPIs */}
         <StatsGrid>
           <StatsCard
