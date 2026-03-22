@@ -89,10 +89,10 @@ export default function LandingPage() {
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/patient">
+                <Link href="/medicines">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto gap-2">
-                    <Heart className="h-4 w-4" />
-                    Patient Portal
+                    <Package className="h-4 w-4" />
+                    Medicine Catalog
                   </Button>
                 </Link>
               </div>
