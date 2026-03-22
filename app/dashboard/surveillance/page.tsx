@@ -10,6 +10,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -21,6 +29,9 @@ import {
   STOCK_TREND_DATA,
   BOTSWANA_DISTRICTS,
   DISTRICT_RISK_DATA,
+  REGIONAL_DISPENSING_TRENDS,
+  OUTBREAK_ALERTS,
+  DISTRICT_HEATMAP_DATA,
   type District,
 } from "@/lib/data"
 import { 
@@ -58,13 +69,14 @@ const TREATMENT_OUTCOMES = [
   { name: "Lost to Follow-up", value: 8, color: "hsl(var(--chart-3))" },
 ]
 
-// Early warning indicators
-const EARLY_WARNINGS = [
-  { id: 1, indicator: "Unusual TB medicine consumption spike", district: "Kweneng", change: 45, severity: "warning" as const },
-  { id: 2, indicator: "Malaria case increase", district: "North-West", change: 28, severity: "warning" as const },
-  { id: 3, indicator: "Chronic care stockout correlation", district: "Kgalagadi", change: -35, severity: "critical" as const },
-  { id: 4, indicator: "Treatment completion rate decline", district: "Southern", change: -12, severity: "warning" as const },
-]
+// Early warning indicators (now using data from lib/data.ts)
+const EARLY_WARNINGS = REGIONAL_DISPENSING_TRENDS.filter(t => t.isSpike || t.isTrending).map((trend, i) => ({
+  id: i + 1,
+  indicator: `${trend.condition} ${trend.isSpike ? 'spike' : 'trend'} detected`,
+  district: trend.district,
+  change: trend.changePercent,
+  severity: trend.changePercent > 50 ? "critical" as const : "warning" as const,
+}))
 
 // District-level disease data
 const DISTRICT_DISEASE_DATA = BOTSWANA_DISTRICTS.map((district) => ({
@@ -417,6 +429,118 @@ export default function SurveillanceDashboardPage() {
                     Metformin stockouts in 3 districts may impact 450 diabetic patients.
                   </p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </DashboardSection>
+
+        {/* Outbreak Detection System */}
+        <DashboardSection
+          title="Outbreak Detection System"
+          description="Disease spread indicators detected from medicine dispensing patterns"
+        >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {OUTBREAK_ALERTS.map((alert) => (
+              <Card 
+                key={alert.id}
+                className={`${
+                  alert.severity === "critical" 
+                    ? "border-destructive/50 bg-destructive/5" 
+                    : "border-accent/50 bg-accent/5"
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className={`h-5 w-5 ${
+                        alert.severity === "critical" ? "text-destructive" : "text-accent-foreground"
+                      }`} />
+                      <Badge variant={alert.severity === "critical" ? "destructive" : "secondary"}>
+                        {alert.type.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(alert.detectedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  <h4 className="font-semibold mb-1">{alert.condition}</h4>
+                  <p className="text-xs text-muted-foreground mb-3">{alert.district} District</p>
+                  
+                  <p className="text-sm mb-3">{alert.description}</p>
+                  
+                  <div className="flex items-center justify-between text-sm mb-3">
+                    <span className="text-muted-foreground">Affected Facilities</span>
+                    <span className="font-medium">{alert.affectedFacilities}</span>
+                  </div>
+                  
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Recommended Action</p>
+                    <p className="text-sm">{alert.recommendedAction}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </DashboardSection>
+
+        {/* Regional Dispensing Trends Table */}
+        <DashboardSection
+          title="Regional Dispensing Trends"
+          description="Week-over-week medicine dispensing changes by district and condition"
+        >
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium">District</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium">Condition</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium">Programme</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium">Current Week</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium">Previous Week</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium">Change</th>
+                      <th className="px-4 py-3 text-center text-sm font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {REGIONAL_DISPENSING_TRENDS.map((trend, i) => (
+                      <tr key={i} className={trend.isSpike ? "bg-destructive/5" : ""}>
+                        <td className="px-4 py-3 text-sm font-medium">{trend.district}</td>
+                        <td className="px-4 py-3 text-sm">{trend.condition}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <Badge variant="outline">{trend.programme}</Badge>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-right">{trend.dispensingCount}</td>
+                        <td className="px-4 py-3 text-sm text-right text-muted-foreground">{trend.previousPeriodCount}</td>
+                        <td className="px-4 py-3 text-sm text-right">
+                          <span className={`flex items-center justify-end gap-1 ${
+                            trend.changePercent > 0 ? "text-destructive" : "text-success"
+                          }`}>
+                            {trend.changePercent > 0 ? (
+                              <ArrowUpRight className="h-4 w-4" />
+                            ) : (
+                              <ArrowDownRight className="h-4 w-4" />
+                            )}
+                            {Math.abs(trend.changePercent).toFixed(1)}%
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {trend.isSpike && (
+                            <Badge variant="destructive" className="text-xs">SPIKE</Badge>
+                          )}
+                          {!trend.isSpike && trend.isTrending && (
+                            <Badge variant="secondary" className="text-xs">TRENDING</Badge>
+                          )}
+                          {!trend.isSpike && !trend.isTrending && (
+                            <span className="text-muted-foreground text-xs">Normal</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           </Card>

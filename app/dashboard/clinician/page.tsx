@@ -22,7 +22,9 @@ import {
   PATIENT_DATA,
   MEDICINE_STOCK_DATA,
   CONTINUITY_ALERTS,
+  PATIENTS_WITH_HISTORY,
 } from "@/lib/data"
+import Link from "next/link"
 import { 
   Users, 
   AlertTriangle,
@@ -38,40 +40,8 @@ import {
   FileText,
 } from "lucide-react"
 
-// Extended patient data for clinician view
-const CLINICIAN_PATIENTS = [
-  ...PATIENT_DATA,
-  {
-    id: "P-004",
-    name: "Mpho Setshogo",
-    nationalId: "***-***-3456",
-    facility: "Princess Marina Hospital",
-    district: "South-East" as const,
-    condition: "TB Treatment",
-    medications: [
-      { name: "Rifampicin/Isoniazid FDC", dosage: "150/75mg", frequency: "Once daily", daysSupply: 28, refillsRemaining: 2 },
-    ],
-    treatmentStartDate: "2023-10-15",
-    nextPickupDate: "2024-01-25",
-    adherenceRate: 98,
-    riskStatus: "good" as const,
-  },
-  {
-    id: "P-005",
-    name: "Boitumelo Phiri",
-    nationalId: "***-***-7890",
-    facility: "Princess Marina Hospital",
-    district: "South-East" as const,
-    condition: "Malaria Treatment",
-    medications: [
-      { name: "Artemether-Lumefantrine", dosage: "20/120mg", frequency: "Twice daily", daysSupply: 3, refillsRemaining: 0 },
-    ],
-    treatmentStartDate: "2024-01-10",
-    nextPickupDate: "2024-01-15",
-    adherenceRate: 100,
-    riskStatus: "good" as const,
-  },
-]
+// Use enhanced patient data with history
+const CLINICIAN_PATIENTS = PATIENTS_WITH_HISTORY
 
 // Quick stock check for common prescriptions
 const QUICK_STOCK = MEDICINE_STOCK_DATA.slice(0, 5).map((med) => ({
@@ -107,6 +77,31 @@ export default function ClinicianDashboardPage() {
       alertCount={criticalPatients + overduePickups}
     >
       <div className="space-y-6">
+        {/* Quick Actions */}
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <FileText className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Patient Records Portal</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Access full prescription history, treatment records, and patient locations
+                  </p>
+                </div>
+              </div>
+              <Link href="/patient">
+                <Button>
+                  Open Patient Portal
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* KPIs */}
         <StatsGrid>
           <StatsCard
@@ -235,10 +230,12 @@ export default function ClinicianDashboardPage() {
                                 </div>
                               </div>
                             </div>
-                            <Button variant="ghost" size="sm">
-                              View
-                              <ArrowRight className="h-4 w-4 ml-1" />
-                            </Button>
+                            <Link href={`/dashboard/clinician/patient/${patient.id}`}>
+                              <Button variant="ghost" size="sm">
+                                View
+                                <ArrowRight className="h-4 w-4 ml-1" />
+                              </Button>
+                            </Link>
                           </div>
 
                           {/* Medications */}

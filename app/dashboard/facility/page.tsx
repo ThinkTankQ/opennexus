@@ -30,7 +30,11 @@ import {
   CONTINUITY_ALERTS,
   BOTSWANA_DISTRICTS,
   FACILITY_DATA,
+  DISPENSING_RECORDS,
+  FACILITY_INVENTORY,
+  MEDICINE_EXPIRY_ALERTS,
 } from "@/lib/data"
+import { ExpiryAlerts } from "@/components/dashboard/expiry-alerts"
 import { 
   Package, 
   Users, 
@@ -306,8 +310,68 @@ export default function FacilityDashboardPage() {
                 <AlertList alerts={facilityAlerts} maxItems={3} compact />
               </CardContent>
             </Card>
+
+            {/* Expiring Medicines */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Expiring Soon
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ExpiryAlerts maxItems={3} compact showHeader={false} />
+              </CardContent>
+            </Card>
           </div>
         </div>
+
+        {/* Recent Dispensing Records */}
+        <DashboardSection
+          title="Recent Dispensing Records"
+          description="Medicines issued to patients - automatically updates stock levels"
+        >
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Medicine</TableHead>
+                    <TableHead className="text-right">Qty</TableHead>
+                    <TableHead>Programme</TableHead>
+                    <TableHead>Dispensing Staff</TableHead>
+                    <TableHead>Prescription</TableHead>
+                    <TableHead>Patient</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {DISPENSING_RECORDS.slice(0, 6).map((record) => (
+                    <TableRow key={record.id}>
+                      <TableCell className="text-sm">{record.date}</TableCell>
+                      <TableCell className="font-medium">{record.medicineName}</TableCell>
+                      <TableCell className="text-right">{record.quantity}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs">{record.programme}</Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{record.dispensingStaffName}</TableCell>
+                      <TableCell className="text-sm">
+                        {record.prescriptionId || <span className="text-muted-foreground">-</span>}
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {record.patientId ? (
+                          <span className="text-primary">{record.patientId}</span>
+                        ) : (
+                          <span className="text-muted-foreground">Walk-in</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </DashboardSection>
 
         {/* Patient Continuity Section */}
         <DashboardSection

@@ -15,9 +15,11 @@ import {
   SHIPMENT_DATA, 
   CONTINUITY_ALERTS,
   STOCK_TREND_DATA,
+  MEDICINE_EXPIRY_ALERTS,
   type District,
   type MedicineStock,
 } from "@/lib/data"
+import { ExpiryAlerts, ExpirySummaryCard } from "@/components/dashboard/expiry-alerts"
 import { 
   Package, 
   Building2, 
@@ -326,7 +328,7 @@ export default function CMSDashboardPage() {
         </DashboardGrid>
 
         {/* Summary Cards */}
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-4 gap-4">
           <Card className="bg-destructive/5 border-destructive/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -368,7 +370,16 @@ export default function CMSDashboardPage() {
               </div>
             </CardContent>
           </Card>
+          <ExpirySummaryCard />
         </div>
+
+        {/* Expiring Medicines Section */}
+        <DashboardSection
+          title="Medicines Approaching Expiry"
+          description="Items requiring attention to prevent wastage"
+        >
+          <ExpiryAlerts maxItems={5} showHeader={false} />
+        </DashboardSection>
       </div>
     </DashboardLayout>
   )

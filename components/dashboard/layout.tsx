@@ -30,6 +30,7 @@ export function DashboardLayout({
           title={title} 
           subtitle={subtitle} 
           alertCount={alertCount}
+          userRole={role}
         />
         <main className={cn(
           "flex-1 overflow-y-auto p-6",

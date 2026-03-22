@@ -1,6 +1,8 @@
 "use client"
 
-import { Bell, Search, User, Sun, Moon } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Search, User, Home, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -12,12 +14,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { NotificationBell } from "@/components/notifications/push-notifications"
+import type { UserRole } from "@/lib/data"
 
 interface DashboardHeaderProps {
   title: string
   subtitle?: string
   alertCount?: number
   showSearch?: boolean
+  showNavigation?: boolean
+  userRole?: UserRole
   className?: string
 }
 
@@ -26,18 +32,51 @@ export function DashboardHeader({
   subtitle,
   alertCount = 0,
   showSearch = true,
+  showNavigation = true,
+  userRole = "cms",
   className,
 }: DashboardHeaderProps) {
+  const router = useRouter()
+
   return (
     <header className={cn(
       "flex items-center justify-between px-6 py-4 bg-card border-b",
       className
     )}>
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-        {subtitle && (
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
+      <div className="flex items-center gap-4">
+        {/* Navigation Buttons */}
+        {showNavigation && (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.back()}
+              className="h-9 w-9"
+              title="Go Back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="sr-only">Go Back</span>
+            </Button>
+            <Link href="/">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9"
+                title="Go to Home"
+              >
+                <Home className="h-4 w-4" />
+                <span className="sr-only">Go to Home</span>
+              </Button>
+            </Link>
+          </div>
         )}
+        
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          {subtitle && (
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
@@ -51,14 +90,7 @@ export function DashboardHeader({
           </div>
         )}
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          {alertCount > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center">
-              {alertCount > 9 ? "9+" : alertCount}
-            </span>
-          )}
-        </Button>
+        <NotificationBell userRole={userRole} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
