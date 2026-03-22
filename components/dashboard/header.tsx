@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Bell, Search, User, Home, ArrowLeft } from "lucide-react"
+import { Search, User, Home, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { NotificationBell } from "@/components/notifications/push-notifications"
+import type { UserRole } from "@/lib/data"
 
 interface DashboardHeaderProps {
   title: string
@@ -21,6 +23,7 @@ interface DashboardHeaderProps {
   alertCount?: number
   showSearch?: boolean
   showNavigation?: boolean
+  userRole?: UserRole
   className?: string
 }
 
@@ -30,6 +33,7 @@ export function DashboardHeader({
   alertCount = 0,
   showSearch = true,
   showNavigation = true,
+  userRole = "cms",
   className,
 }: DashboardHeaderProps) {
   const router = useRouter()
@@ -86,14 +90,7 @@ export function DashboardHeader({
           </div>
         )}
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          {alertCount > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 w-5 bg-destructive text-destructive-foreground text-xs font-bold rounded-full flex items-center justify-center">
-              {alertCount > 9 ? "9+" : alertCount}
-            </span>
-          )}
-        </Button>
+        <NotificationBell userRole={userRole} />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

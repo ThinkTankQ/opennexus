@@ -32,7 +32,9 @@ import {
   FACILITY_DATA,
   DISPENSING_RECORDS,
   FACILITY_INVENTORY,
+  MEDICINE_EXPIRY_ALERTS,
 } from "@/lib/data"
+import { ExpiryAlerts } from "@/components/dashboard/expiry-alerts"
 import { 
   Package, 
   Users, 
@@ -306,6 +308,19 @@ export default function FacilityDashboardPage() {
               </CardHeader>
               <CardContent>
                 <AlertList alerts={facilityAlerts} maxItems={3} compact />
+              </CardContent>
+            </Card>
+
+            {/* Expiring Medicines */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Expiring Soon
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ExpiryAlerts maxItems={3} compact showHeader={false} />
               </CardContent>
             </Card>
           </div>

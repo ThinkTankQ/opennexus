@@ -404,3 +404,287 @@ export const DISTRICT_HEATMAP_DATA: DistrictHeatmapData[] = [
   { district: "South-East", tb: 65, malaria: 15, hypertension: 285, diabetes: 245, outbreakRisk: "good", activeAlerts: 0 },
   { district: "Southern", tb: 72, malaria: 38, hypertension: 195, diabetes: 162, outbreakRisk: "warning", activeAlerts: 0 },
 ]
+
+// ============================================
+// PATIENT PRESCRIPTION HISTORY & TRACKING
+// ============================================
+
+// Prescription Record for treatment history
+export interface PrescriptionRecord {
+  id: string
+  patientId: string
+  prescriberId: string
+  prescriberName: string
+  prescribedDate: string
+  facilityId: string
+  facilityName: string
+  facilityDistrict: District
+  facilityAddress: string
+  medicines: {
+    name: string
+    dosage: string
+    quantity: number
+    frequency: string
+    durationDays: number
+  }[]
+  diagnosis: string
+  status: "active" | "completed" | "discontinued"
+  dispensedDate?: string
+  dispensedBy?: string
+}
+
+// Enhanced Patient with location and history
+export interface PatientWithHistory extends Patient {
+  homeAddress: string
+  homeDistrict: District
+  phoneNumber: string
+  emergencyContact: string
+  dateOfBirth: string
+  gender: "Male" | "Female"
+  prescriptionHistory: PrescriptionRecord[]
+  treatmentPhase?: string
+}
+
+export const PATIENTS_WITH_HISTORY: PatientWithHistory[] = [
+  {
+    id: "P-001",
+    name: "Kelebogile Mosweu",
+    nationalId: "456789012345",
+    facility: "Princess Marina Hospital",
+    district: "South-East",
+    condition: "TB Treatment",
+    homeAddress: "Plot 1234, Extension 12, Gaborone",
+    homeDistrict: "South-East",
+    phoneNumber: "+267 72 345 678",
+    emergencyContact: "+267 71 234 567",
+    dateOfBirth: "1985-03-15",
+    gender: "Female",
+    medications: [
+      { name: "Rifampicin/Isoniazid FDC", dosage: "150/75mg", frequency: "Once daily", daysSupply: 14, refillsRemaining: 4 },
+      { name: "Pyrazinamide", dosage: "500mg", frequency: "Once daily", daysSupply: 14, refillsRemaining: 4 },
+    ],
+    treatmentStartDate: "2023-11-01",
+    nextPickupDate: "2024-01-22",
+    adherenceRate: 94,
+    riskStatus: "good",
+    treatmentPhase: "Intensive Phase",
+    prescriptionHistory: [
+      {
+        id: "RX-4521",
+        patientId: "P-001",
+        prescriberId: "DR-001",
+        prescriberName: "Dr. M. Kgosidintsi",
+        prescribedDate: "2024-01-08",
+        facilityId: "F-001",
+        facilityName: "Princess Marina Hospital",
+        facilityDistrict: "South-East",
+        facilityAddress: "Notwane Road, Gaborone",
+        medicines: [
+          { name: "Rifampicin/Isoniazid FDC", dosage: "150/75mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+          { name: "Pyrazinamide", dosage: "500mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+        ],
+        diagnosis: "Pulmonary Tuberculosis",
+        status: "active",
+        dispensedDate: "2024-01-08",
+        dispensedBy: "Nurse K. Modise"
+      },
+      {
+        id: "RX-4320",
+        patientId: "P-001",
+        prescriberId: "DR-001",
+        prescriberName: "Dr. M. Kgosidintsi",
+        prescribedDate: "2023-12-11",
+        facilityId: "F-001",
+        facilityName: "Princess Marina Hospital",
+        facilityDistrict: "South-East",
+        facilityAddress: "Notwane Road, Gaborone",
+        medicines: [
+          { name: "Rifampicin/Isoniazid FDC", dosage: "150/75mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+          { name: "Pyrazinamide", dosage: "500mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+          { name: "Ethambutol", dosage: "400mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+        ],
+        diagnosis: "Pulmonary Tuberculosis",
+        status: "completed",
+        dispensedDate: "2023-12-11",
+        dispensedBy: "Nurse K. Modise"
+      },
+      {
+        id: "RX-4115",
+        patientId: "P-001",
+        prescriberId: "DR-002",
+        prescriberName: "Dr. T. Pheto",
+        prescribedDate: "2023-11-13",
+        facilityId: "F-001",
+        facilityName: "Princess Marina Hospital",
+        facilityDistrict: "South-East",
+        facilityAddress: "Notwane Road, Gaborone",
+        medicines: [
+          { name: "Rifampicin/Isoniazid FDC", dosage: "150/75mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+          { name: "Pyrazinamide", dosage: "500mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+          { name: "Ethambutol", dosage: "400mg", quantity: 28, frequency: "Once daily", durationDays: 28 },
+        ],
+        diagnosis: "Pulmonary Tuberculosis - Initial",
+        status: "completed",
+        dispensedDate: "2023-11-13",
+        dispensedBy: "Nurse B. Tsheko"
+      },
+    ]
+  },
+  {
+    id: "P-002",
+    name: "Thabo Molefe",
+    nationalId: "567890123456",
+    facility: "Maun General Hospital",
+    district: "North-West",
+    condition: "Hypertension + Diabetes",
+    homeAddress: "House 456, Boseja Ward, Maun",
+    homeDistrict: "North-West",
+    phoneNumber: "+267 74 567 890",
+    emergencyContact: "+267 75 678 901",
+    dateOfBirth: "1972-08-22",
+    gender: "Male",
+    medications: [
+      { name: "Metformin", dosage: "500mg", frequency: "Twice daily", daysSupply: 3, refillsRemaining: 2 },
+      { name: "Amlodipine", dosage: "5mg", frequency: "Once daily", daysSupply: 3, refillsRemaining: 2 },
+    ],
+    treatmentStartDate: "2022-06-15",
+    nextPickupDate: "2024-01-16",
+    adherenceRate: 78,
+    riskStatus: "warning",
+    prescriptionHistory: [
+      {
+        id: "RX-4522",
+        patientId: "P-002",
+        prescriberId: "DR-005",
+        prescriberName: "Dr. K. Mothibi",
+        prescribedDate: "2024-01-02",
+        facilityId: "F-003",
+        facilityName: "Maun General Hospital",
+        facilityDistrict: "North-West",
+        facilityAddress: "Shorobe Road, Maun",
+        medicines: [
+          { name: "Metformin", dosage: "500mg", quantity: 60, frequency: "Twice daily", durationDays: 30 },
+          { name: "Amlodipine", dosage: "5mg", quantity: 30, frequency: "Once daily", durationDays: 30 },
+        ],
+        diagnosis: "Type 2 Diabetes Mellitus, Essential Hypertension",
+        status: "active",
+        dispensedDate: "2024-01-02",
+        dispensedBy: "Nurse T. Mogapi"
+      },
+      {
+        id: "RX-4210",
+        patientId: "P-002",
+        prescriberId: "DR-005",
+        prescriberName: "Dr. K. Mothibi",
+        prescribedDate: "2023-12-02",
+        facilityId: "F-003",
+        facilityName: "Maun General Hospital",
+        facilityDistrict: "North-West",
+        facilityAddress: "Shorobe Road, Maun",
+        medicines: [
+          { name: "Metformin", dosage: "500mg", quantity: 60, frequency: "Twice daily", durationDays: 30 },
+          { name: "Amlodipine", dosage: "5mg", quantity: 30, frequency: "Once daily", durationDays: 30 },
+        ],
+        diagnosis: "Type 2 Diabetes Mellitus, Essential Hypertension",
+        status: "completed",
+        dispensedDate: "2023-12-02",
+        dispensedBy: "Nurse T. Mogapi"
+      },
+    ]
+  },
+  {
+    id: "P-003",
+    name: "Goitseone Kgosidintsi",
+    nationalId: "678901234567",
+    facility: "Tsabong Primary Hospital",
+    district: "Kgalagadi",
+    condition: "TB Treatment",
+    homeAddress: "Ward 3, Tsabong Village",
+    homeDistrict: "Kgalagadi",
+    phoneNumber: "+267 76 789 012",
+    emergencyContact: "+267 77 890 123",
+    dateOfBirth: "1990-11-05",
+    gender: "Male",
+    medications: [
+      { name: "Rifampicin", dosage: "150mg", frequency: "Once daily", daysSupply: 0, refillsRemaining: 3 },
+    ],
+    treatmentStartDate: "2023-12-01",
+    nextPickupDate: "2024-01-14",
+    adherenceRate: 65,
+    riskStatus: "critical",
+    treatmentPhase: "Intensive Phase",
+    prescriptionHistory: [
+      {
+        id: "RX-4520",
+        patientId: "P-003",
+        prescriberId: "DR-008",
+        prescriberName: "Dr. L. Sebina",
+        prescribedDate: "2023-12-15",
+        facilityId: "F-004",
+        facilityName: "Tsabong Primary Hospital",
+        facilityDistrict: "Kgalagadi",
+        facilityAddress: "Main Road, Tsabong",
+        medicines: [
+          { name: "Rifampicin", dosage: "150mg", quantity: 30, frequency: "Once daily", durationDays: 30 },
+          { name: "Isoniazid", dosage: "100mg", quantity: 30, frequency: "Once daily", durationDays: 30 },
+          { name: "Pyrazinamide", dosage: "500mg", quantity: 30, frequency: "Once daily", durationDays: 30 },
+        ],
+        diagnosis: "Pulmonary Tuberculosis",
+        status: "active",
+        dispensedDate: "2023-12-15",
+        dispensedBy: "Nurse M. Seipei"
+      },
+    ]
+  },
+]
+
+// ============================================
+// MEDICINE EXPIRY TRACKING
+// ============================================
+
+export interface MedicineExpiryAlert {
+  id: string
+  medicineId: string
+  medicineName: string
+  batchNumber: string
+  quantity: number
+  expiryDate: string
+  daysUntilExpiry: number
+  facilityId: string
+  facilityName: string
+  district: District
+  severity: RiskLevel
+  action: "dispose" | "redistribute" | "prioritize"
+}
+
+export const MEDICINE_EXPIRY_ALERTS: MedicineExpiryAlert[] = [
+  { id: "EXP-001", medicineId: "3", medicineName: "Pyrazinamide 500mg", batchNumber: "BT-2024-012", quantity: 500, expiryDate: "2024-02-10", daysUntilExpiry: 25, facilityId: "F-004", facilityName: "Tsabong Primary Hospital", district: "Kgalagadi", severity: "critical", action: "prioritize" },
+  { id: "EXP-002", medicineId: "2", medicineName: "Isoniazid 100mg", batchNumber: "BT-2023-145", quantity: 1200, expiryDate: "2024-03-20", daysUntilExpiry: 64, facilityId: "F-001", facilityName: "Princess Marina Hospital", district: "South-East", severity: "warning", action: "redistribute" },
+  { id: "EXP-003", medicineId: "6", medicineName: "Quinine Sulphate 300mg", batchNumber: "BT-2023-078", quantity: 350, expiryDate: "2024-02-28", daysUntilExpiry: 43, facilityId: "F-005", facilityName: "Ghanzi Primary Hospital", district: "Ghanzi", severity: "warning", action: "prioritize" },
+  { id: "EXP-004", medicineId: "8", medicineName: "Metformin 500mg", batchNumber: "BT-2023-200", quantity: 2500, expiryDate: "2024-04-15", daysUntilExpiry: 89, facilityId: "CMS", facilityName: "Central Medical Stores", district: "South-East", severity: "warning", action: "redistribute" },
+  { id: "EXP-005", medicineId: "5", medicineName: "Artemether-Lumefantrine", batchNumber: "BT-2023-089", quantity: 180, expiryDate: "2024-01-31", daysUntilExpiry: 15, facilityId: "F-003", facilityName: "Maun General Hospital", district: "North-West", severity: "critical", action: "prioritize" },
+]
+
+// ============================================
+// PUSH NOTIFICATIONS / CRITICAL ALERTS
+// ============================================
+
+export interface PushNotification {
+  id: string
+  type: "stock-critical" | "patient-missed" | "expiry-imminent" | "outbreak-detected" | "shipment-delayed"
+  title: string
+  message: string
+  severity: RiskLevel
+  timestamp: string
+  read: boolean
+  actionUrl?: string
+  targetRoles: UserRole[]
+}
+
+export const PUSH_NOTIFICATIONS: PushNotification[] = [
+  { id: "N-001", type: "stock-critical", title: "Critical Stock Alert", message: "Pyrazinamide stock at Kgalagadi district is critically low (7 days remaining). Immediate action required.", severity: "critical", timestamp: "2024-01-15T08:00:00", read: false, actionUrl: "/dashboard/cms", targetRoles: ["cms", "logistics"] },
+  { id: "N-002", type: "patient-missed", title: "Patient Missed Pickup", message: "Goitseone K. (TB Treatment) has missed medication pickup by 3 days at Tsabong Primary Hospital.", severity: "critical", timestamp: "2024-01-15T07:30:00", read: false, actionUrl: "/dashboard/clinician", targetRoles: ["clinician", "facility"] },
+  { id: "N-003", type: "expiry-imminent", title: "Medicine Expiring Soon", message: "180 units of Artemether-Lumefantrine at Maun General Hospital expire in 15 days. Prioritize dispensing.", severity: "critical", timestamp: "2024-01-15T06:00:00", read: false, actionUrl: "/dashboard/facility", targetRoles: ["cms", "facility"] },
+  { id: "N-004", type: "outbreak-detected", title: "Potential Outbreak Alert", message: "72.5% increase in antimalarial dispensing detected in North-West district. Investigation recommended.", severity: "warning", timestamp: "2024-01-14T14:00:00", read: true, actionUrl: "/dashboard/surveillance", targetRoles: ["surveillance", "cms"] },
+  { id: "N-005", type: "shipment-delayed", title: "Shipment Delayed", message: "Shipment SHP-002 to Southern district is delayed. Expected arrival pushed to Jan 18.", severity: "warning", timestamp: "2024-01-14T10:00:00", read: true, actionUrl: "/dashboard/logistics", targetRoles: ["logistics", "cms", "facility"] },
+]
