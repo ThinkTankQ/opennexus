@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { StockTicker } from "@/components/stock-ticker"
 import { 
   Activity, 
   Shield, 
@@ -401,6 +402,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Stock Insights Ticker */}
+      <StockTicker />
 
       {/* Footer */}
       <footer className="py-12 border-t bg-card">
