@@ -224,7 +224,7 @@ export function BotswanaMap({ onDistrictClick, selectedDistrict = null, classNam
         setIsLoading(false)
       } catch {
         if (!cancelled) {
-          setLoadError("Unable to load district boundaries from OpenStreetMap.")
+          setLoadError("Unable to load districts boundaries from OpenStreetMap.")
           setIsLoading(false)
         }
       }
