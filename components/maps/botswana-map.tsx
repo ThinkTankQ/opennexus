@@ -87,15 +87,19 @@ function BotswanaMapInner({
           weight: 2.5,
           color: "#334155"
         })
-        l.bringToFront()
-      },
-      mouseout: (e: any) => {
-        setHoveredDistrict(null)
-        const l = e.target
-        l.setStyle(getStyle(feature))
-      },
-      click: () => {
-        onDistrictClick?.(district)
+
+        group.addTo(map)
+
+        if (boundaryFeatures.length > 0) {
+          map.fitBounds(group.getBounds(), { padding: [18, 18] })
+        }
+
+        setIsLoading(false)
+      } catch {
+        if (!cancelled) {
+          setLoadError("Unable to load districts boundaries from OpenStreetMap Map Database.")
+          setIsLoading(false)
+        }
       }
     })
 
